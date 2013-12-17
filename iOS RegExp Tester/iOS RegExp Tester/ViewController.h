@@ -12,7 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *regexpInput;
 @property (weak, nonatomic) IBOutlet UITextView *inputTextView;
-@property (weak, nonatomic) IBOutlet UITextView *outputTextView;
 
 - (IBAction)textFieldTextChanged:(id)sender;
 

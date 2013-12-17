@@ -13,7 +13,7 @@
 
 @property (nonatomic) id currentResponder;
 
-- (void)updateMatches;
+- (void)updateMatchesWithRegex:(NSString*)regex andText:(NSString*)testText;
 
 @end
 
@@ -24,10 +24,8 @@
     [super viewDidLoad];
 	
 	[_inputTextView.layer setBorderColor:[UIColor grayColor].CGColor];
-	[_outputTextView.layer setBorderColor:[UIColor grayColor].CGColor];
 	
 	[_inputTextView.layer setBorderWidth:0.5f];
-	[_outputTextView.layer setBorderWidth:0.5f];
 	
 	[_inputTextView setDelegate:self];
 	[_regexpInput setDelegate:self];
@@ -43,31 +41,33 @@
 
 #pragma mark - Private Methods
 
-- (void)updateMatches
+- (void)updateMatchesWithRegex:(NSString*)regex andText:(NSString*)testText
 {
-	if (([_regexpInput hasText] == YES) && ([_inputTextView hasText] == YES))
+	NSLog(@"ViewController: testing");
+	if (([regex length] > 0) && ([testText length] > 0))
 	{
+		NSLog(@"ViewController: Input text and regex has text");
 		NSError *error = nil;
 		
-		NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:_regexpInput.text options:NSRegularExpressionCaseInsensitive error:&error];
+		NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:regex options:NSRegularExpressionCaseInsensitive error:&error];
 		
-		NSArray *matches = [regexp matchesInString:_inputTextView.text options:0 range:NSMakeRange(0, [_inputTextView.text length])];
+		NSArray *matches = [regexp matchesInString:_inputTextView.text options:0 range:NSMakeRange(0, [testText length])];
 		
 		if ([matches count] > 0)
 		{
-			NSMutableAttributedString *attribString = [[NSMutableAttributedString alloc] initWithString:_inputTextView.text];
+			NSMutableAttributedString *attribString = [[NSMutableAttributedString alloc] initWithString:testText];
 			
 			for (NSTextCheckingResult *match in matches)
 			{
 				[attribString setAttributes:@{NSBackgroundColorAttributeName : [UIColor yellowColor]} range:[match range]];
 			}
 			
-			[_outputTextView setAttributedText:attribString];
+			[_inputTextView setAttributedText:attribString];
 		}
 	}
 	else
 	{
-		[_outputTextView setText:_inputTextView.text];
+		[_inputTextView setText:_inputTextView.text];
 	}
 }
 
@@ -76,14 +76,14 @@
 {
 	_currentResponder = textField;
 	
-	[self updateMatches];
+	[self updateMatchesWithRegex:textField.text andText:_inputTextView.text];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
 	[textField resignFirstResponder];
 	
-	[self updateMatches];
+	[self updateMatchesWithRegex:textField.text andText:_inputTextView.text];
 	
 	return YES;
 }
@@ -92,7 +92,7 @@
 {
 	[textView resignFirstResponder];
 	
-	[self updateMatches];
+	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
 	
 	return YES;
 }
@@ -104,26 +104,24 @@
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-	[_outputTextView setText:_inputTextView.text];
-	
-	[self updateMatches];
+	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
-	[self updateMatches];
+	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
 }
 
 
 - (void)viewTapped:(UIGestureRecognizer*)recognizer
 {
-	[self updateMatches];
+	[self updateMatchesWithRegex:_regexpInput.text andText:_inputTextView.text];
 	
 	[_currentResponder resignFirstResponder];
 }
 
 - (IBAction)textFieldTextChanged:(id)sender
 {
-	[self updateMatches];
+	[self updateMatchesWithRegex:((UITextField*)sender).text andText:_inputTextView.text];
 }
 @end
