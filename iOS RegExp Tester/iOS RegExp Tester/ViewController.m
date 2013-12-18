@@ -24,7 +24,6 @@
     [super viewDidLoad];
 	
 	[_inputTextView.layer setBorderColor:[UIColor grayColor].CGColor];
-	
 	[_inputTextView.layer setBorderWidth:0.5f];
 	
 	[_inputTextView setDelegate:self];
@@ -43,15 +42,17 @@
 
 - (void)updateMatchesWithRegex:(NSString*)regex andText:(NSString*)testText
 {
-	NSLog(@"ViewController: testing");
-	if (([regex length] > 0) && ([testText length] > 0))
+	NSMutableAttributedString *finalText = [[NSMutableAttributedString alloc] initWithString:testText attributes:@{NSBackgroundColorAttributeName : [UIColor clearColor]}];
+	[_inputTextView setAttributedText:finalText];
+	
+	
+	if ([regex length] > 0)
 	{
-		NSLog(@"ViewController: Input text and regex has text");
 		NSError *error = nil;
 		
 		NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:regex options:NSRegularExpressionCaseInsensitive error:&error];
 		
-		NSArray *matches = [regexp matchesInString:_inputTextView.text options:0 range:NSMakeRange(0, [testText length])];
+		NSArray *matches = [regexp matchesInString:testText options:0 range:NSMakeRange(0, [testText length])];
 		
 		if ([matches count] > 0)
 		{
@@ -65,12 +66,12 @@
 			[_inputTextView setAttributedText:attribString];
 		}
 	}
-	else
-	{
-		[_inputTextView setText:_inputTextView.text];
-	}
 }
 
+
+#pragma mark - Delegate Methods
+
+#pragma mark UITexfField Delegate Methods
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
@@ -88,14 +89,27 @@
 	return YES;
 }
 
-- (BOOL)textViewShouldEndEditing:(UITextView *)textView
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-	[textView resignFirstResponder];
-	
-	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
+	NSMutableString *finalText = [[NSMutableString alloc] initWithString:textField.text];
+	[finalText replaceCharactersInRange:range withString:string];
+
+	[self updateMatchesWithRegex:finalText andText:_inputTextView.text];
 	
 	return YES;
 }
+
+- (BOOL)textViewShouldEndEditing:(UITextView *)textView
+{
+	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
+	
+	[textView resignFirstResponder];
+	
+	return YES;
+}
+
+
+#pragma mark UITextView Delegate Methods
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
@@ -112,6 +126,18 @@
 	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
 }
 
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+	NSMutableString *finalText = [[NSMutableString alloc] initWithString:textView.text];
+	[finalText replaceCharactersInRange:range withString:text];
+
+	[self updateMatchesWithRegex:_regexpInput.text andText:finalText];
+	
+	return NO;
+}
+
+
+#pragma mark - Action Methods
 
 - (void)viewTapped:(UIGestureRecognizer*)recognizer
 {
@@ -120,8 +146,4 @@
 	[_currentResponder resignFirstResponder];
 }
 
-- (IBAction)textFieldTextChanged:(id)sender
-{
-	[self updateMatchesWithRegex:((UITextField*)sender).text andText:_inputTextView.text];
-}
 @end

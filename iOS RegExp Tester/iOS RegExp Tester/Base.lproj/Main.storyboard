@@ -21,9 +21,6 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardAppearance="alert"/>
-                                <connections>
-                                    <action selector="textFieldTextChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="Y45-EQ-LgZ"/>
-                                </connections>
                             </textField>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Input/Output" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="53L-IU-gTt">
                                 <rect key="frame" x="20" y="64" width="81" height="21"/>
@@ -44,7 +41,7 @@
                     </view>
                     <connections>
                         <outlet property="inputTextView" destination="CO6-fa-awn" id="QLL-hO-P8M"/>
-                        <outlet property="regexpInput" destination="5bU-Ue-bm7" id="x2d-Lk-msR"/>
+                        <outlet property="regexpInput" destination="5bU-Ue-bm7" id="ydp-NW-6Po"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
