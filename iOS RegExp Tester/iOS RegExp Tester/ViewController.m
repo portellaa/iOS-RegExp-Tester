@@ -23,11 +23,11 @@
 {
     [super viewDidLoad];
 	
-	[_inputTextView.layer setBorderColor:[UIColor grayColor].CGColor];
-	[_inputTextView.layer setBorderWidth:0.5f];
+	[self.inputTextView.layer setBorderColor:[UIColor grayColor].CGColor];
+	[self.inputTextView.layer setBorderWidth:0.5f];
 	
-	[_inputTextView setDelegate:self];
-	[_regexpInput setDelegate:self];
+	[self.inputTextView setDelegate:self];
+	[self.regexpInput setDelegate:self];
 	
 	[self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
 }
@@ -43,7 +43,7 @@
 - (void)updateMatchesWithRegex:(NSString*)regex andText:(NSString*)testText
 {
 	NSMutableAttributedString *finalText = [[NSMutableAttributedString alloc] initWithString:testText attributes:@{NSBackgroundColorAttributeName : [UIColor clearColor]}];
-	[_inputTextView setAttributedText:finalText];
+	[self.inputTextView setAttributedText:finalText];
 	
 	
 	if ([regex length] > 0)
@@ -63,11 +63,10 @@
 				[attribString setAttributes:@{NSBackgroundColorAttributeName : [UIColor yellowColor]} range:[match range]];
 			}
 			
-			[_inputTextView setAttributedText:attribString];
+			[self.inputTextView setAttributedText:attribString];
 		}
 	}
 }
-
 
 #pragma mark - Delegate Methods
 
@@ -75,16 +74,16 @@
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
-	_currentResponder = textField;
+	self.currentResponder = textField;
 	
-	[self updateMatchesWithRegex:textField.text andText:_inputTextView.text];
+	[self updateMatchesWithRegex:textField.text andText:self.inputTextView.text];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
 	[textField resignFirstResponder];
 	
-	[self updateMatchesWithRegex:textField.text andText:_inputTextView.text];
+	[self updateMatchesWithRegex:textField.text andText:self.inputTextView.text];
 	
 	return YES;
 }
@@ -94,14 +93,14 @@
 	NSMutableString *finalText = [[NSMutableString alloc] initWithString:textField.text];
 	[finalText replaceCharactersInRange:range withString:string];
 
-	[self updateMatchesWithRegex:finalText andText:_inputTextView.text];
+	[self updateMatchesWithRegex:finalText andText:self.inputTextView.text];
 	
 	return YES;
 }
 
 - (BOOL)textViewShouldEndEditing:(UITextView *)textView
 {
-	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
+	[self updateMatchesWithRegex:self.regexpInput.text andText:textView.text];
 	
 	[textView resignFirstResponder];
 	
@@ -113,17 +112,17 @@
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
-	_currentResponder = textView;
+	self.currentResponder = textView;
 }
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
+	[self updateMatchesWithRegex:self.regexpInput.text andText:textView.text];
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
-	[self updateMatchesWithRegex:_regexpInput.text andText:textView.text];
+	[self updateMatchesWithRegex:self.regexpInput.text andText:textView.text];
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -131,7 +130,7 @@
 	NSMutableString *finalText = [[NSMutableString alloc] initWithString:textView.text];
 	[finalText replaceCharactersInRange:range withString:text];
 
-	[self updateMatchesWithRegex:_regexpInput.text andText:finalText];
+	[self updateMatchesWithRegex:self.regexpInput.text andText:finalText];
 	
 	return NO;
 }
@@ -141,9 +140,9 @@
 
 - (void)viewTapped:(UIGestureRecognizer*)recognizer
 {
-	[self updateMatchesWithRegex:_regexpInput.text andText:_inputTextView.text];
+	[self updateMatchesWithRegex:self.regexpInput.text andText:self.inputTextView.text];
 	
-	[_currentResponder resignFirstResponder];
+	[self.currentResponder resignFirstResponder];
 }
 
 @end
